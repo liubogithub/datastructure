@@ -7,62 +7,63 @@
 int n;	/* n items */
 int d;	/* d: left rotation operations */
 
-struct list {
-	struct list *prev;
-	struct list *next;
-	int v;
-};
-
-struct list *queue_head;	/* array head */
-
-void list_add_tail(struct list *new, struct list *h, struct list *prev)
-{
-	assert(prev);
-	prev->next = new;
-	h->prev = new;
-	new->prev = prev;
-	new->next = h;
-}
-
-void list_del_init(struct list *l)
-{
-	struct list *prev = l->prev;
-	struct list *next = l->next;
-
-	assert(prev);
-	assert(next);
-	prev->next = next;
-	next->prev = prev;
-	l->next = l->prev = NULL;
-}
+int *queue;	/* array */
 
 int main() {
 	int i;
-	struct list *l;
+	int exchange;
+	int j;
+	int half;
+	int ops;
 
 	scanf("%d %d", &n, &d);
 	assert(n >= d);
-	queue_head = malloc(sizeof(struct list));
-	assert(queue_head);
-	queue_head->prev = queue_head->next = queue_head;
+	queue = malloc(sizeof(int) * n);
+	assert(queue);
 
 	for (i = 0; i < n; i++) {
-		struct list *new = malloc(sizeof(struct list));
-		assert(new);
-		scanf("%d", &new->v);
-		list_add_tail(new, queue_head, queue_head->prev);
+		scanf("%d", &queue[i]);
 	}
 
-	l = queue_head->next;
-	for (i = 0; i < d; i++, l = queue_head->next) {
-		list_del_init(l);
-		list_add_tail(l, queue_head, queue_head->prev);
+	half = n >> 1;
+	/* 0 ~ n-1 */
+	if (d <= half) {
+		ops = d;
+		for (i = 0; i < ops; i++) {
+			exchange = queue[0];
+			/* bubble up 1 by 1 */
+			for (j = 0; j < n - 1; j++) {
+				queue[j] = queue[j + 1];
+			}
+			/* assign exchange to the last one */
+			queue[n - 1] = exchange;
+#if 0
+			for (j = 0; j < n; j++)
+				printf("%d ", queue[j]);
+			printf("\n");
+#endif
+		}
+	} else {	/* d >= half */
+		/* bubble reversely, adjust ops count accordingly */
+		ops = n - d ;
+		for (i = 0; i < ops; i++) {
+			exchange = queue[n - 1];
+			/* bubble reversely 1 by 1 */
+			for (j = n - 1; j > 0; j--) {
+				queue[j] = queue[j - 1];
+			}
+			/* assign exchange to the first one */
+			queue[0] = exchange;
+		}
+#if 0
+		for (j = 0; j < n; j++)
+			printf("%d ", queue[j]);
+		printf("\n");
+#endif
 	}
 
-	l = queue_head->next;
-	for (i = 0; i < n; i++, l = l->next) {
-		assert(l);
-		printf("%d ", l->v);
+	for (i = 0; i < n; i++) {
+		printf("%d ", queue[i]);
 	}
 	printf("\n");
 	/* Enter your code here. Read input from STDIN. Print output to STDOUT */    
