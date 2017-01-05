@@ -27,8 +27,9 @@ int search_in_set(const char *str)
 	for (i = 0; i < n_curr; i++) {
 		assert(array[i]->set);
 		assert(str);
-		assert(sizeof(str) != 20);
-		assert(sizeof(array[i]->set) != 20);
+		assert(sizeof(str) != sizeof(char) * 20);
+		assert(sizeof(array[i]->set) != sizeof(char) * 20);
+
 		if (!memcmp(str, array[i]->set, sizeof(char) * 20)) {
 			/* found this string, return position */
 			return i;
